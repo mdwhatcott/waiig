@@ -26,31 +26,62 @@ func (l *Lexer) readChar() {
 }
 
 func (l *Lexer) NextToken() (result token.Token) {
-	defer l.readChar()
+	l.skipWhitespace()
 
 	switch l.ch {
 	case '=':
-		return newToken(token.ASSIGN, l.ch)
+		result = newToken(token.ASSIGN, l.ch)
 	case ';':
-		return newToken(token.SEMICOLON, l.ch)
+		result = newToken(token.SEMICOLON, l.ch)
 	case '(':
-		return newToken(token.LPAREN, l.ch)
+		result = newToken(token.LPAREN, l.ch)
 	case ')':
-		return newToken(token.RPAREN, l.ch)
+		result = newToken(token.RPAREN, l.ch)
 	case ',':
-		return newToken(token.COMMA, l.ch)
+		result = newToken(token.COMMA, l.ch)
 	case '+':
-		return newToken(token.PLUS, l.ch)
+		result = newToken(token.PLUS, l.ch)
 	case '{':
-		return newToken(token.LBRACE, l.ch)
+		result = newToken(token.LBRACE, l.ch)
 	case '}':
-		return newToken(token.RBRACE, l.ch)
+		result = newToken(token.RBRACE, l.ch)
 	case 0:
 		return token.Token{Type: token.EOF}
+	default:
+		if isLetter(l.ch) {
+			result.Literal = l.readIdentifier()
+			result.Type = token.LookupIdent(result.Literal)
+			return result
+		} else if isDigit(l.ch) {
+			result.Literal = l.readNumber()
+			result.Type = token.INT
+			return result
+		} else {
+			result = newToken(token.ILLEGAL, l.ch)
+		}
 	}
+	l.readChar()
 	return result
 }
-
+func (l *Lexer) skipWhitespace()        { _ = l.readWhile(isWhitespace) }
+func (l *Lexer) readIdentifier() string { return l.readWhile(isLetter) }
+func (l *Lexer) readNumber() string     { return l.readWhile(isDigit) }
+func (l *Lexer) readWhile(pred func(byte) bool) string {
+	start := l.position
+	for pred(l.ch) {
+		l.readChar()
+	}
+	return l.input[start:l.position]
+}
+func isWhitespace(ch byte) bool {
+	return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r'
+}
+func isDigit(ch byte) bool {
+	return '0' <= ch && ch <= '9'
+}
+func isLetter(ch byte) bool {
+	return ch == '=' || 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z'
+}
 func newToken(tokenType token.TokenType, ch byte) token.Token {
 	return token.Token{Type: tokenType, Literal: string(ch)}
 }
