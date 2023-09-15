@@ -28,25 +28,11 @@ func (l *Lexer) readChar() {
 func (l *Lexer) NextToken() (result token.Token) {
 	l.skipWhitespace()
 
-	switch l.ch {
-	case '=':
-		result = newToken(token.ASSIGN, l.ch)
-	case ';':
-		result = newToken(token.SEMICOLON, l.ch)
-	case '(':
-		result = newToken(token.LPAREN, l.ch)
-	case ')':
-		result = newToken(token.RPAREN, l.ch)
-	case ',':
-		result = newToken(token.COMMA, l.ch)
-	case '+':
-		result = newToken(token.PLUS, l.ch)
-	case '{':
-		result = newToken(token.LBRACE, l.ch)
-	case '}':
-		result = newToken(token.RBRACE, l.ch)
-	case 0:
-		return token.Token{Type: token.EOF}
+	switch t := token.TokenType(l.ch); t {
+	case token.ASSIGN, token.SEMICOLON, token.COMMA, token.BANG, token.ASTERISK,
+		token.LPAREN, token.RPAREN, token.LBRACE, token.RBRACE, token.LT, token.GT,
+		token.PLUS, token.MINUS, token.SLASH:
+		result = newToken(t, l.ch)
 	default:
 		if isLetter(l.ch) {
 			result.Literal = l.readIdentifier()
@@ -56,6 +42,8 @@ func (l *Lexer) NextToken() (result token.Token) {
 			result.Literal = l.readNumber()
 			result.Type = token.INT
 			return result
+		} else if l.ch == 0 {
+			return token.Token{Type: token.EOF}
 		} else {
 			result = newToken(token.ILLEGAL, l.ch)
 		}
