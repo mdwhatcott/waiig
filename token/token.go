@@ -1,5 +1,7 @@
 package token
 
+import "github.com/mdwhatcott/funcy"
+
 type TokenType string
 
 type Token struct {
@@ -8,10 +10,7 @@ type Token struct {
 }
 
 func LookupIdent(ident string) TokenType {
-	if tok, ok := keywords[ident]; ok {
-		return tok
-	}
-	return IDENT
+	return funcy.FirstNonDefault(keywords[ident], IDENT)
 }
 
 var keywords = map[string]TokenType{
@@ -41,6 +40,8 @@ const (
 	SLASH    = "/"
 	LT       = "<"
 	GT       = ">"
+	EQ       = "=="
+	NOT_EQ   = "!="
 
 	// Delimiters
 	COMMA     = ","
