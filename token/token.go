@@ -9,6 +9,10 @@ type Token struct {
 	Literal string
 }
 
+func New(tokenType TokenType, literal string) Token {
+	return Token{Type: tokenType, Literal: literal}
+}
+
 func LookupIdent(ident string) TokenType {
 	return funcy.FirstNonDefault(keywords[ident], IDENT)
 }
