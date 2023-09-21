@@ -41,17 +41,44 @@ let foobar = 838383;
 			&ast.LetStatement{
 				Token: token.New(token.LET, "let"),
 				Name:  &ast.Identifier{Token: token.New(token.IDENT, "x"), Value: "x"},
-				// Value:...
+				// Value:... // TODO
 			},
 			&ast.LetStatement{
 				Token: token.New(token.LET, "let"),
 				Name:  &ast.Identifier{Token: token.New(token.IDENT, "y"), Value: "y"},
-				// Value:...
+				// Value:... // TODO
 			},
 			&ast.LetStatement{
 				Token: token.New(token.LET, "let"),
 				Name:  &ast.Identifier{Token: token.New(token.IDENT, "foobar"), Value: "foobar"},
-				// Value:...
+				// Value:... // TODO
+			},
+		},
+	})
+}
+
+func TestReturnStatement(t *testing.T) {
+	input := `
+return 5;
+return 10;
+return 993322;`
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	should.So(t, p.Errors(), should.BeNil)
+	should.So(t, program, should.Equal, &ast.Program{
+		Statements: []ast.Statement{
+			&ast.ReturnStatement{
+				Token: token.New(token.RETURN, "return"),
+				// ReturnValue:... // TODO
+			},
+			&ast.ReturnStatement{
+				Token: token.New(token.RETURN, "return"),
+				// ReturnValue:... // TODO
+			},
+			&ast.ReturnStatement{
+				Token: token.New(token.RETURN, "return"),
+				// ReturnValue:... // TODO
 			},
 		},
 	})
