@@ -1,8 +1,14 @@
 package ast
 
-import "github.com/mdwhatcott/waiig/token"
+import (
+	"fmt"
+	"strings"
+
+	"github.com/mdwhatcott/waiig/token"
+)
 
 type Node interface {
+	fmt.Stringer
 	TokenLiteral() string
 }
 
@@ -52,3 +58,32 @@ type ReturnStatement struct {
 
 func (rs *ReturnStatement) statementNode()       {}
 func (rs *ReturnStatement) TokenLiteral() string { return rs.Token.Literal }
+
+type ExpressionStatement struct {
+	Token      token.Token
+	Expression Expression
+}
+
+func (es *ExpressionStatement) statementNode()       {}
+func (es *ExpressionStatement) TokenLiteral() string { return es.Token.Literal }
+
+func (p *Program) String() string {
+	var out strings.Builder
+	for _, s := range p.Statements {
+		out.WriteString(s.String())
+	}
+	return out.String()
+}
+func (ls *LetStatement) String() string {
+	return fmt.Sprintf("%s %s = %s", ls.TokenLiteral(), ls.Name.String(), ls.Value.String())
+}
+func (rs *ReturnStatement) String() string {
+	return fmt.Sprintf("%s %s", rs.TokenLiteral(), rs.ReturnValue.String()) // nil check on rs.ReturnValue?
+}
+func (es *ExpressionStatement) String() string {
+	if es == nil || es.Expression == nil {
+		return ""
+	}
+	return es.Expression.String()
+}
+func (i *Identifier) String() string { return i.Value }
