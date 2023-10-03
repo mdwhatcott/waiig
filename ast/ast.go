@@ -78,7 +78,7 @@ func (ls *LetStatement) String() string {
 	return fmt.Sprintf("%s %s = %s;", ls.TokenLiteral(), ls.Name.String(), ls.Value.String())
 }
 func (rs *ReturnStatement) String() string {
-	return fmt.Sprintf("%s %s", rs.TokenLiteral(), rs.ReturnValue.String()) // nil check on rs.ReturnValue?
+	return fmt.Sprintf("%s %s;", rs.TokenLiteral(), rs.ReturnValue.String()) // nil check on rs.ReturnValue?
 }
 func (es *ExpressionStatement) String() string {
 	if es == nil || es.Expression == nil {
